@@ -24,7 +24,10 @@ for the three sub-sites) and commit the result here.
 
 ## Deploy
 
-Pushing to main runs .github/workflows/deploy.yml: Hugo builds everything
-and publishes public/ to GitHub Pages under the custom domain jetpacs.org.
-APKs are NOT hosted here — pre-release builds belong on GitHub Releases;
-the site links to them.
+Cloudflare Pages is connected to this repo and deploys every push to main:
+build command `./build-all.sh`, output directory `public`, environment
+variable `HUGO_VERSION=0.164.0`. The custom domain jetpacs.org is attached
+in the Pages project (DNS is already on Cloudflare).
+.github/workflows/ci.yml only verifies the docroot assembles.
+APKs are NOT hosted here — Cloudflare Pages caps files at 25 MB; pre-release
+builds belong on GitHub Releases, and the site links to them.

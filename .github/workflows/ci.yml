@@ -1,0 +1,22 @@
+name: CI
+
+# Deployment is Cloudflare Pages (connected to this repo; build command
+# ./build-all.sh, output dir public/, env HUGO_VERSION=0.164.0). This
+# workflow only proves the docroot assembles, so breakage is caught on
+# push/PR instead of in a failed Cloudflare deploy.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: "0.164.0"
+          extended: true
+      - run: ./build-all.sh
