@@ -1,0 +1,64 @@
+{
+  "slug": "jetpacs-composer",
+  "name": "Jetpacs Composer",
+  "tagline": "No-code CRUD apps for Jetpacs, described as a single declarative org document — no code in the app document, ever.",
+  "lede_paragraphs": [
+    "Jetpacs Composer builds Tier-1 <a href=\"https://github.com/calebc42/jetpacs\">Jetpacs</a> apps as declarative org documents. It is the AppSheet model, org-native: where AppSheet builds an app around a spreadsheet, Composer builds one around org tables. A single `app.org` file describes the whole app — its views, datasources, and column types — and it runs on the phone as a native-UI Jetpacs app, with org files as the backend and Emacs as the brain.",
+    "The format is the contract, and it is hand-authorable: `docs/FORMAT.md` defines everything the runtime understands, and the desktop editor is a convenience, not a gatekeeper. `elisp/build-app-bundle.el` turns one `app.org` into a self-contained `jetpacs-app-<id>.el` bundle; `jetpacs-crud.el` is the generic CRUD runtime over org tables, checkboxes, and records, exposing a single closed `crud.*` wire vocabulary. Data-bearing views read through the `vulpea` note index and `org-ql`; on a device missing them, views degrade to a labelled placeholder rather than failing, and the engines install themselves from MELPA on first load.",
+    "A Compose Desktop editor (Kotlin) is in progress: visual forms over the format, a live semantic preview pane that follows the current `AppSpec`, bundle export, and one-click deploy to a device over adb or sshd. Composer is part of the openly LLM-generated Jetpacs proof-of-concept ecosystem."
+  ],
+  "what_bullets": [
+    "One `app.org` file describes an entire app — hand-authorable, with no code in the app document",
+    "Ten view kinds: `table`, `checklist`, `records`, `notes`, `board`, `calendar`, `gallery`, `tree`, `dashboard`, `gantt`",
+    "Typed columns — `text`, `number`, `date`, `enum(A,B,C)`, `checkbox` — plus `ref(View)` cross-view references",
+    "`:FILTER:` queries as org-ql sexps, filter tokens (`todo:NEXT tags:work`), or free text, evaluated off the vulpea index",
+    "`build-app-bundle.el`: one `app.org` in, one self-contained `jetpacs-app-<id>.el` bundle out (runtime + document + install)",
+    "`jetpacs-crud.el` generic CRUD runtime over org via a closed `crud.*` action vocabulary; every handler validates the source file against the app's declared sources",
+    "Graceful degradation: views needing `vulpea`/`org-ql` show a placeholder on a bare core; engines auto-install from MELPA",
+    "Engine packs (FORMAT v4): `#+JETPACS_PACK:` plus `pack:` sources/actions, manifest-backed and fail-closed at runtime",
+    "Redeploy-in-place: adopts the new document's structure while keeping on-device data, matching views by heading title",
+    "CSV paste import (header-matched, type-validated, atomic) and CSV / org-table export with spreadsheet-formula-injection guarding",
+    "ERT suite covering parse, registration, lint-clean wire goldens, every mutation path, and a bare-core bundle smoke test",
+    "Canonical fixtures pin the format: `pantry.org` (minimal, ~25 lines) and `hello-world.org` (every view kind and column type)"
+  ],
+  "status": "Proof of concept, part of the openly LLM-generated Jetpacs ecosystem. The format, the `jetpacs-crud.el` runtime, and the `build-app-bundle.el` bundle builder work today, and the format is fully usable by hand without the editor — the \"Try it today\" path builds and deploys the Pantry example against a live device. The desktop Compose editor is explicitly in progress. Engine-pack machinery shipped in FORMAT v4 (manifest store, pickers, fail-closed binding, with Glasspane as the reference pack), but the surveyed candidate packs beyond it are a deliberately un-executed follow-on (docs/AUDIT-engine-packs.md), and a `pack:`-sourced view currently renders read-only cards regardless of its `:KIND:`. The spec's stated v2 non-goals still hold: no conditionals, no formula editing, no arbitrary layout, no per-node styling, no filters on table views. Platform reach is whatever Jetpacs supports — Emacs under Termux on Android, driven over the Jetpacs bridge, deployed via adb or sshd. Note: the README still calls the format \"v2\" in places, while docs/FORMAT.md is the current v4 contract.",
+  "getting_started": "# Build the bundle from the example app (Pantry):\nemacs -Q --batch -l elisp/build-app-bundle.el -- elisp/test/fixtures/pantry.org .\n\n# Ship it with the jetpacs deploy script (stages to /sdcard/Documents/jetpacs):\n../jetpacs/deploy.ps1 -Bundles jetpacs-app-pantry.el\n\n# On the device, register the app once in ~/.emacs.d/jetpacs/apps.el:\n#   (add-to-list 'jetpacs-installed-bundles \"jetpacs-app-pantry.el\")\n# then restart Emacs — the Pantry app appears in the Jetpacs launcher.\n# Later re-deploys need no edits; each restart adopts the newest staged copy.\n\n# Run the test suite (from Windows):\nwsl -d Debian -- sh elisp/test/run-tests.sh",
+  "primary_links": [
+    {
+      "label": "GitHub — jetpacs-composer",
+      "url": "https://github.com/calebc42/jetpacs-composer"
+    },
+    {
+      "label": "Jetpacs framework",
+      "url": "https://github.com/calebc42/jetpacs"
+    },
+    {
+      "label": "org-ql",
+      "url": "https://github.com/alphapapa/org-ql"
+    },
+    {
+      "label": "vulpea",
+      "url": "https://github.com/d12frosted/vulpea"
+    }
+  ],
+  "docs_manifest": [
+    {
+      "file": "docs/FORMAT.md",
+      "title": "The Jetpacs CRUD app format, v4 — app.org",
+      "weight": 10
+    }
+  ],
+  "skipped_docs": [
+    "README.md — rendered as the landing page, not a separate doc",
+    "docs/AUDIT-engine-packs.md — survey only, marked \"deliberately NOT executed\"",
+    "docs/PLAN-live-semantic-preview.md — internal planning doc",
+    "docs/PLAN-nocobase-horizons.md — internal roadmap/planning doc",
+    "docs/PLAN-orgmode-kmp-integration.md — internal planning doc",
+    "docs/PLAN-pack-targeting.md — internal stage handoff doc",
+    "docs/PLAN-phase2-canonical-jetpacs-org.md — internal planning doc",
+    "docs/PLAN-phase5-cleanup.md — internal planning doc",
+    "docs/PLAN-vulpea-rearchitecture.md — internal planning doc",
+    "jetpacs/** — the Jetpacs foundation git submodule; its docs (SPEC.md, ARCHITECTURE.md, TUTORIAL.md, ROADMAP.md, etc.) belong to the sibling Jetpacs foundation site, not this section"
+  ],
+  "link_rewrites_note": "docs/FORMAT.md links to fixtures with repo-relative paths that climb out of docs/ — `../elisp/test/fixtures/pantry.org` and `../elisp/test/fixtures/hello-world.org` — which must be rewritten to GitHub blob URLs on main (e.g. https://github.com/calebc42/jetpacs-composer/blob/slop-fork/main/elisp/test/fixtures/pantry.org). If README.md content is surfaced, it links to in-repo source with repo-relative paths (`docs/FORMAT.md`, `elisp/jetpacs-crud.el`, `elisp/jetpacs-crud-orgapp.el`, `elisp/build-app-bundle.el`) and to the sibling submodule script `../jetpacs/deploy.ps1` — rewrite the elisp/docs paths to this repo's GitHub blob URLs and the `../jetpacs/...` path to the jetpacs repo (https://github.com/calebc42/jetpacs). FORMAT.md's intra-document anchor links (e.g. `#device-setup--what-installs-the-engines`, `#filter--selecting-records`) stay as-is. Absolute external links (github.com/alphapapa/org-ql, github.com/d12frosted/vulpea, the jetpacs and glasspane repos) pass through unchanged."
+}

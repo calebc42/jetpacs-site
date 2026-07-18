@@ -1,0 +1,60 @@
+{
+  "slug": "glasspane",
+  "name": "Glasspane",
+  "tagline": "A pane of glass over your org files — the reference Tier-1 Jetpacs app, built so a notes-app convert never has to see Emacs or raw org syntax unless they ask.",
+  "lede_paragraphs": [
+    "Glasspane is the reference Tier-1 application for the Jetpacs ecosystem: a pure-elisp Emacs client that vendors the Jetpacs core as a git submodule and drives an Android companion over the Jetpacs wire protocol. All Kotlin lives in the `jetpacs` repo; this repo is elisp only. The shipped client is a single generated bundle, `glasspane.el`, built from the app sources under `emacs/apps/glasspane/` and opened with `(require 'jetpacs-core)`.",
+    "Its guiding goal is PKM conversion. The normative bar is that an Obsidian, Logseq, or Notion user should never see Emacs and never see raw org syntax unless they ask for it. The bet is that org-mode already subsumes the *data models* of all three — pages, wikilinks, nested tags, typed properties, queries, daily notes, tasks and dates — so the remaining work is UX abstraction. The companion is treated as a pane of glass where the renderer, not the syntax, is the interface.",
+    "Like the rest of the ecosystem, Glasspane is an openly LLM-generated proof of concept. A substantial amount of the linking, journal, and saved-views work is landed code, but much of it has never had its acceptance pass on real hardware, and the convert-facing pieces — live/concealed editing, the importers, sync, zero-Emacs onboarding — are still design notes rather than implemented features."
+  ],
+  "what_bullets": [
+    "Wikilink `[[` autocomplete that inserts real `[[id:…][Title]]` org links, backed by the vulpea note database (`glasspane-notes.el`)",
+    "Backlinks panel (\"Linked references\") plus lazily-computed unlinked mentions with one-tap \"link it\" via the `link.materialize` action",
+    "Daily-note journal as an opt-in landing surface (`glasspane-journal-landing`), with day navigation and one-tap reschedule of carried-over unfinished TODOs — anything scheduled before today (`glasspane-journal.el`)",
+    "Saved org-ql queries as named, persisted views with three renderings — list/table, board (kanban by TODO state), and calendar (`glasspane-views.el`)",
+    "SRS review-and-authoring skin over org-srs (`glasspane-srs.el`)",
+    "Rich org reader, tables, clock, gallery, and a demo tour, plus bundled reference Tier-1 apps (the magit pie, the ghostel terminal skin)",
+    "Org-defined automations, a sparse filter, and quick capture",
+    "Engine `sources` (`glasspane.org`, vulpea-backed `glasspane.notes`), an annotated action catalog, and `glasspane-pack.json` for the composer",
+    "Single-file `glasspane.el` bundle regenerated from source (`emacs/build-bundle.el`), CI-enforced fresh, with an ERT suite run against the pinned jetpacs core submodule"
+  ],
+  "status": "Openly LLM-generated proof of concept. Horizons 0–3 are landed code-side: the org dashboard, capture, clock, and search; the daily-note journal; vulpea-backed wikilink autocomplete and backlinks; saved org-ql views (list/board/calendar); org-defined automations; and an org-srs review skin. Real limitations remain: most of the automation, trigger, and journal work has never had its on-device acceptance pass (a pending list is tracked in the repo); the vulpea backlink-engine performance spike — cold-index time, incremental update cost, and memory on a realistic vault — is still owed by the phone, and a bad result reopens the org-roam fallback. A hard gate blocks heavier device integration until battery numbers exist. The convert-facing horizon — concealed/live editing, structural outliner manipulation, a slash menu, the Obsidian/Logseq/Notion importers, the FOSS sync floor, and zero-Emacs onboarding — is parked as design notes, not implemented. KMP desktop and iOS are decision/prep only (iOS cannot run Emacs, so it would be remote-Emacs-first). Requires the jetpacs core (min api 1.5.0) plus org, org-ql, and vulpea 2.0; the jetpacs submodule is a deliberate reviewed pin, not a live edge.",
+  "getting_started": "Load order matters — the core first. Both `jetpacs-core.el` (jetpacs checkout root) and `glasspane.el` (this repo's root) go on `load-path`:\n\n```elisp\n(require 'jetpacs-core)   ; from the jetpacs repo / submodule\n(require 'glasspane)      ; from this repo\n```\n\nTo build the bundle and run the test suite (CI runs the same two steps and fails if `glasspane.el` is stale):\n\n```sh\ngit submodule update --init\nemacs --batch -l emacs/build-bundle.el        # regenerate glasspane.el\nemacs -Q --batch -l test/glasspane-tests.el -f ert-run-tests-batch-and-exit\n```",
+  "primary_links": [
+    {
+      "label": "GitHub — glasspane",
+      "url": "https://github.com/calebc42/glasspane"
+    },
+    {
+      "label": "Jetpacs foundation (vendored core)",
+      "url": "https://github.com/calebc42/jetpacs"
+    }
+  ],
+  "docs_manifest": [
+    {
+      "file": "docs/ROADMAP.md",
+      "title": "Roadmap — the Glasspane app",
+      "weight": 10
+    },
+    {
+      "file": "docs/PLAN-pkm-conversion.md",
+      "title": "Plan: PKM conversion (Obsidian / Logseq / Notion) & the KMP horizon",
+      "weight": 20
+    }
+  ],
+  "skipped_docs": [
+    "README.md — rendered as this landing page's source, not a separate doc",
+    "docs/PLAN-pkm-conversion.md is INCLUDED as the primary PKM-conversion reference; all other PLAN-* excluded as internal planning",
+    "docs/PLAN-automation-and-launcher.md — internal planning",
+    "docs/PLAN-binding-adoption.md — internal planning (status record)",
+    "docs/PLAN-glasspane-org-adoption.md — internal planning (status record)",
+    "docs/PLAN-org-toolbar-elisp.md — internal planning",
+    "docs/PLAN-typed-properties-vault-doctor.md — internal execution plan",
+    "docs/PLAN-vulpea-ecosystem-exploration.md — internal planning",
+    "docs/AUDIT-logseq-plunder.md — internal competitor-UX audit / backlog feed",
+    "docs/AUDIT-orgzly-parity.md — internal parity audit / backlog feed",
+    "docs/DECISION-no-binding-template-dsl.md — internal decision record",
+    "docs/TESTING-ON-DEVICE.md — internal on-device acceptance & battery protocol (TESTING-*)"
+  ],
+  "link_rewrites_note": "The included docs use several link patterns the site build must rewrite. (1) Repo-relative links between docs, e.g. `[PLAN-binding-adoption.md](PLAN-binding-adoption.md)`, `[TESTING-ON-DEVICE.md](TESTING-ON-DEVICE.md)`, `[AUDIT-logseq-plunder.md](AUDIT-logseq-plunder.md)` — these are bare filenames resolving within `docs/`, and most target docs that are EXCLUDED from the site, so they should be rewritten to GitHub blob URLs (https://github.com/calebc42/glasspane/blob/main/docs/<file>); only ROADMAP.md ↔ PLAN-pkm-conversion.md cross-links resolve to published pages. (2) Source-file references such as `glasspane.el`, `emacs/apps/glasspane/glasspane-notes.el`, `emacs/build-bundle.el`, `test/glasspane-tests.el`, and Kotlin paths like `app/src/main/java/com/calebc42/jetpacs/SduiInputNodes.kt` — rewrite to GitHub blob URLs on the appropriate repo (elisp/build paths on glasspane; Kotlin/`*.kt`, `AndroidManifest.xml`, SPEC §-references belong to the jetpacs repo). (3) Cross-repo links: the ROADMAP links the foundation as `https://github.com/calebc42/jetpacs` (absolute, leave as-is), and the README links the vendored submodule as `jetpacs/` / `[jetpacs]: jetpacs/` — rewrite to the jetpacs repo. (4) `docs/DESIGN-editing.md` and `ARCHITECTURE.md` are referenced but do not exist in the repo — leave as plain text or drop, do not link."
+}

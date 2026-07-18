@@ -1,0 +1,5 @@
+{{/* Site-level override of hugo-book's empty body-inject hook.
+     Loads the visible copy-to-clipboard button for code blocks. */}}
+{{ with resources.Get "copy-code.js" | minify | fingerprint }}
+  <script src="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" defer></script>
+{{ end }}

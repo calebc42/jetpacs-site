@@ -1,0 +1,56 @@
+# Jetpacs Composer docs — hugo-book (theme + shared assets copied from _jetpacs-kit).
+# Served under https://jetpacs.org/jetpacs-composer/docs/ from /home/calebc42/pkb/projects/jetpacs/jetpacs-site/public/jetpacs-composer/docs.
+# Content under content/ is synced from the jetpacs-composer repo by sync-docs.sh — do
+# not edit content/*.md by hand; edit upstream and re-sync.
+
+baseURL = 'https://jetpacs.org/jetpacs-composer/docs/'
+locale = 'en-us'
+title = 'Jetpacs Composer'
+theme = 'hugo-book'
+
+disableKinds = ['taxonomy', 'term']
+
+[markup]
+  [markup.goldmark.renderer]
+    unsafe = true
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 3
+  [markup.highlight]
+    noClasses = false
+
+[params]
+  description = 'No-code CRUD apps for Jetpacs, described as a single declarative org document — no code in the app document, ever.'
+  BookTheme = 'auto'
+  BookFavicon = 'jetpacs-icon.svg'
+  BookLogo = 'jetpacs-icon.svg'
+  BookSection = '/'
+  BookRepo = 'https://github.com/calebc42/jetpacs-composer'
+  BookEditLink = '{{ .Site.Params.BookRepo }}/edit/main/{{ with .Page.Params.repo_path }}{{ . }}{{ end }}'
+  BookSearch = true
+  BookComments = false
+  BookPortableLinks = 'warning'
+  BookDateFormat = 'January 2, 2006'
+
+# Ecosystem cross-nav — identical across every jetpacs.org site.
+[menu]
+  [[menu.after]]
+    name = '← Jetpacs home'
+    url = 'https://jetpacs.org/'
+    weight = 10
+  [[menu.after]]
+    name = 'EBP (protocol)'
+    url = 'https://jetpacs.org/ebp/'
+    weight = 20
+  [[menu.after]]
+    name = 'Composer'
+    url = 'https://jetpacs.org/jetpacs-composer/'
+    weight = 30
+  [[menu.after]]
+    name = 'Glasspane'
+    url = 'https://jetpacs.org/glasspane/'
+    weight = 40
+  [[menu.after]]
+    name = 'GitHub'
+    url = 'https://github.com/calebc42/jetpacs-composer'
+    weight = 50

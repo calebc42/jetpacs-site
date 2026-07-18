@@ -1,0 +1,60 @@
+{
+  "slug": "ebp",
+  "name": "EBP — the Emacs Bridge Protocol",
+  "tagline": "The wire contract between a live Emacs and any companion that renders its UI — Emacs is the source of truth, the companion a thin pane of glass.",
+  "lede_paragraphs": [
+    "EBP is a wire protocol, not an application. It defines how a live Emacs drives server-driven UI on a *companion*: Emacs pushes native UI specs and handles the semantic events they generate, while the companion renders those specs, caches the last-known UI for offline display, and reports user interactions back by name. Frames are plain NDJSON — one JSON object per `\\n`-terminated line — and Emacs dials in as the client, the same inversion `emacsclient` uses on the desktop.",
+    "The design premise is a hard boundary: **nothing on the wire is code.** An `action` is a name the client explicitly registered a handler for; `args` are plain data the handler validates. The companion never evaluates, shells out for, or dispatches anything the wire names — it renders data and reports events, so it can never become a remote eval. Auth is a mutual HMAC-SHA256 pairing proof that fails closed in both directions.",
+    "This repository is the **contract**, not an implementation — it exists so any companion (the reference is Android/Compose, but a desktop tray, an e-ink dashboard, a TUI, or a web view is just as conformant) or any client can pin a stable, versioned surface without depending on a reference implementation's layout. It ships the normative `SPEC.md`, a machine-readable `contract.json` vocabulary, a golden conformance corpus, and a build guide. The reference implementation — Jetpacs, an elisp client plus an Android/Compose companion in a separate repo — generates and conformance-tests against it, and a no-code view editor, jetpacs-composer, validates authored emissions against the same `contract.json`."
+  ],
+  "what_bullets": [
+    "Normative spec (`SPEC.md`, spec `1.0-rc`, wire `v: 1`) with a frozen surface: envelope, handshake, surfaces, the semantic-action boundary, and the offline queue",
+    "Machine-readable vocabulary `contract.json` (`contract_format` 3): node types, the per-node key schema (`node_schema`), the frame-kind schema (`kind_schema`), and a discriminated `action_schema`",
+    "Golden conformance corpus — one JSON line per wire shape: `widgets.golden` (85 nodes), `frames.golden` (19 trigger/capability frames), `hypertext.golden` (10 document arrays)",
+    "`validate.py` — a stdlib-only self-check that every golden line validates against `contract.json`, run by this repo's CI",
+    "HMAC-SHA256 pairing handshake with mutual proof, keyed by a token that never crosses the wire and fails closed on a bad client mac or `server_proof`",
+    "Offline queue with `queue.replay` / `queue.drained`, per-client monotonic revisions, and cache-while-disconnected rendering",
+    "An additively-negotiated widget vocabulary (§9): unknown node types degrade to their `children` or nothing — never a crash — gated per-connection via `node_types`",
+    "Optional negotiated sub-protocols: dialogs/toasts/reminders (§7), editor sync (§8), device capabilities (§10), and device triggers (§11)",
+    "`BUILDING-COMPANION.md` — the §12 conformance ladder unrolled into five build rungs, each mapped to the reference Kotlin",
+    "`SPEC-CHANGES.md` amendment log with a strict policy: no entry, no amendment"
+  ],
+  "status": "Release candidate — spec 1.0-rc, wire protocol v: 1, contract_format 3. This repo is the contract only; no implementation lives here. It documents and machine-checks the interface the reference Jetpacs implementation (an elisp client plus an Android/Compose companion, in a separate repo) generates and conformance-tests against. Real limitations: the v0 transport is still loopback TCP 127.0.0.1:8765, with the 1.0 target — a Unix domain socket in a shared-signature directory — not yet on the wire; and everything in §7–§11 (dialogs, editor sync, device capabilities, triggers) is optional and negotiated per-connection — §12 requires none of it — so a client cannot assume any of that surface is present.",
+  "getting_started": "This repo is a contract, not a runnable app, but its conformance check runs standalone with no dependencies:\n\n    git clone https://github.com/calebc42/ebp\n    cd ebp\n    python3 validate.py   # stdlib-only: validates every goldens/*.golden line against contract.json\n\nTo build a companion, start at BUILDING-COMPANION.md and feed each line of goldens/widgets.golden to your renderer's test suite — you are then held to the same truth the reference companion is. Desktop Emacs 28+ speaks the client side out of the box, so the whole development loop runs on one machine.",
+  "primary_links": [
+    {
+      "label": "GitHub — calebc42/ebp",
+      "url": "https://github.com/calebc42/ebp"
+    },
+    {
+      "label": "Reference implementation — calebc42/jetpacs",
+      "url": "https://github.com/calebc42/jetpacs"
+    }
+  ],
+  "docs_manifest": [
+    {
+      "file": "SPEC.md",
+      "title": "EBP — the Emacs Bridge Protocol",
+      "weight": 10
+    },
+    {
+      "file": "BUILDING-COMPANION.md",
+      "title": "Building your own companion",
+      "weight": 20
+    },
+    {
+      "file": "SPEC-CHANGES.md",
+      "title": "SPEC amendment log",
+      "weight": 30
+    }
+  ],
+  "skipped_docs": [
+    "README.md — the repo overview, used as the source for this landing page's lede/bullets rather than published as a doc page",
+    "contract.json — machine-readable vocabulary (data artifact, not a reader doc; linked from the published docs)",
+    "goldens/widgets.golden, goldens/frames.golden, goldens/hypertext.golden — the conformance corpus (data artifacts)",
+    "validate.py — the CI conformance check (source, not a reader doc)",
+    "LICENSE — GPLv3 text",
+    ".github/workflows/validate.yml, .gitattributes — CI and repo config"
+  ],
+  "link_rewrites_note": "These docs use three link patterns the site build should handle: (1) Repo-relative links to files in THIS repo — `SPEC.md`, `SPEC-CHANGES.md`, `BUILDING-COMPANION.md`, `contract.json`, `validate.py`, `LICENSE`, and the `goldens/` directory / `goldens/*.golden` files. Rewrite links that target a published doc (SPEC.md, BUILDING-COMPANION.md, SPEC-CHANGES.md) to their on-site page; rewrite the rest (contract.json, goldens/*, validate.py, LICENSE) to the GitHub blob `https://github.com/calebc42/ebp/blob/main/<path>`. (2) Absolute cross-repo links to the sibling reference implementation — `https://github.com/calebc42/jetpacs` and deep links such as `.../jetpacs/blob/main/docs/BINDING.md` and `.../jetpacs/blob/main/docs/ARCHITECTURE.md` — leave these as absolute GitHub URLs. (3) BUILDING-COMPANION.md names reference-Kotlin source files (e.g. `FrameCodec.kt`, `SduiRenderer.kt`, `JetpacsAuth.kt`) as plain inline text, not links — no rewrite needed."
+}

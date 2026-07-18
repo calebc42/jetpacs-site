@@ -1,0 +1,56 @@
+# Glasspane docs — hugo-book (theme + shared assets copied from _jetpacs-kit).
+# Served under https://jetpacs.org/glasspane/docs/ from /home/calebc42/pkb/projects/jetpacs/jetpacs-site/public/glasspane/docs.
+# Content under content/ is synced from the glasspane repo by sync-docs.sh — do
+# not edit content/*.md by hand; edit upstream and re-sync.
+
+baseURL = 'https://jetpacs.org/glasspane/docs/'
+locale = 'en-us'
+title = 'Glasspane'
+theme = 'hugo-book'
+
+disableKinds = ['taxonomy', 'term']
+
+[markup]
+  [markup.goldmark.renderer]
+    unsafe = true
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 3
+  [markup.highlight]
+    noClasses = false
+
+[params]
+  description = 'A pane of glass over your org files — the reference Tier-1 Jetpacs app, built so a notes-app convert never has to see Emacs or raw org syntax unless they ask.'
+  BookTheme = 'auto'
+  BookFavicon = 'jetpacs-icon.svg'
+  BookLogo = 'jetpacs-icon.svg'
+  BookSection = '/'
+  BookRepo = 'https://github.com/calebc42/glasspane'
+  BookEditLink = '{{ .Site.Params.BookRepo }}/edit/main/{{ with .Page.Params.repo_path }}{{ . }}{{ end }}'
+  BookSearch = true
+  BookComments = false
+  BookPortableLinks = 'warning'
+  BookDateFormat = 'January 2, 2006'
+
+# Ecosystem cross-nav — identical across every jetpacs.org site.
+[menu]
+  [[menu.after]]
+    name = '← Jetpacs home'
+    url = 'https://jetpacs.org/'
+    weight = 10
+  [[menu.after]]
+    name = 'EBP (protocol)'
+    url = 'https://jetpacs.org/ebp/'
+    weight = 20
+  [[menu.after]]
+    name = 'Composer'
+    url = 'https://jetpacs.org/jetpacs-composer/'
+    weight = 30
+  [[menu.after]]
+    name = 'Glasspane'
+    url = 'https://jetpacs.org/glasspane/'
+    weight = 40
+  [[menu.after]]
+    name = 'GitHub'
+    url = 'https://github.com/calebc42/glasspane'
+    weight = 50

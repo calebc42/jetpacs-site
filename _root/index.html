@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jetpacs — Emacs–Android Bridge Protocol</title>
+<meta name="description" content="Don't approximate Emacs — connect to it. The phone is a thin pane of glass; Emacs is the source of truth behind it.">
+<link rel="icon" type="image/svg+xml" href="jetpacs-icon.svg">
+<style>
+  /* Jetpacs app default palette — rooted in the Emacs logo purple #7f5ab6.
+     Kept in sync with the docs site (pkb/sites/jetpacs/assets/_custom.scss). */
+  :root {
+    --bg: #f0ebde;            /* background main */
+    --fg: #3f3b3b;            /* text primary */
+    --muted: #6f695e;         /* derived: subtle bg darkened toward text */
+    --accent: #624195;        /* accent dark — AA on cream; #7f5ab6 is 4.4:1 */
+    --accent-2: #7f5ab6;      /* THE Emacs purple — decorative accents */
+    --surface: #f2efe4;       /* background elevated */
+    --border: #d4cbb6;        /* background subtle */
+    --modeline-bg: #d4cbb6;
+    --modeline-fg: #3f3b3b;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1e1c24;          /* background main */
+      --fg: #e6e2d8;          /* text primary */
+      --muted: #9a9590;       /* text secondary */
+      --accent: #b8a3e0;      /* accent light */
+      --accent-2: #8a6bc4;    /* accent dark, lifted */
+      --surface: #2a2832;     /* background elevated */
+      --border: #353240;      /* background subtle */
+      --modeline-bg: #2a2832;
+      --modeline-fg: #9a9590;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font: 17px/1.65 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  code, pre, .mono {
+    font-family: ui-monospace, "Cascadia Code", "JetBrains Mono", Consolas, monospace;
+  }
+  main {
+    max-width: 44rem;
+    margin: 0 auto;
+    padding: 3.5rem 1.25rem 2rem;
+  }
+  a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  a:hover { color: var(--accent-2); }
+
+  /* Hero */
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+  }
+  .brand img {
+    width: 74px;
+    height: 74px;
+    flex: none;
+  }
+  .wordmark {
+    font-family: ui-monospace, Consolas, monospace;
+    font-size: 2.6rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+  .wordmark .paren { color: var(--muted); font-weight: 400; }
+  .tagline {
+    font-size: 1.3rem;
+    margin: 0.5rem 0 1.25rem;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .lede { font-size: 1.05rem; }
+  .poc {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-family: ui-monospace, Consolas, monospace;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 0.1rem 0.5rem;
+    margin-bottom: 1rem;
+  }
+  .cta { margin: 1.5rem 0 0; display: flex; flex-wrap: wrap; gap: 0.6rem; }
+  .cta a {
+    display: inline-block;
+    font-family: ui-monospace, Consolas, monospace;
+    font-size: 0.9rem;
+    text-decoration: none;
+    padding: 0.45rem 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    color: var(--fg);
+    /* YoRHa-style hover: accent fills left-to-right, text inverts */
+    background-color: var(--surface);
+    background-image: linear-gradient(var(--accent), var(--accent));
+    background-repeat: no-repeat;
+    background-size: 0% 100%;
+    transition: background-size 0.22s ease, color 0.22s ease, border-color 0.22s ease;
+  }
+  .cta a.primary { background-color: var(--accent); border-color: var(--accent); color: var(--bg); }
+  .cta a:hover { border-color: var(--accent); background-size: 100% 100%; color: var(--bg); }
+  .cta a.primary:hover { opacity: 0.9; }
+
+  /* Org-style section headings */
+  h2 {
+    font-family: ui-monospace, Consolas, monospace;
+    font-size: 1.25rem;
+    margin: 3rem 0 0.75rem;
+  }
+  h2::before { content: "* "; color: var(--accent-2); }
+  h3 {
+    font-family: ui-monospace, Consolas, monospace;
+    font-size: 1.05rem;
+    margin: 1.5rem 0 0.5rem;
+  }
+  h3::before { content: "** "; color: var(--accent); }
+
+  pre.diagram {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 1rem 1.25rem;
+    overflow-x: auto;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    margin: 2.5rem 0 0;
+    position: relative;
+  }
+  pre.code {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 0.75rem 1rem;
+    overflow-x: auto;
+    font-size: 0.85rem;
+  }
+  code.inline {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 0.05rem 0.35rem;
+    font-size: 0.85em;
+  }
+  ul { padding-left: 1.4rem; }
+  li { margin: 0.35rem 0; }
+  li::marker { color: var(--accent-2); }
+
+  .repos { display: grid; gap: 0.75rem; margin-top: 1rem; }
+  .repo {
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    background: var(--surface);
+    padding: 0.9rem 1.1rem;
+    position: relative;
+  }
+  /* YoRHa corner brackets — top-left and bottom-right L ornaments */
+  .repo::before, .repo::after {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border: 0 solid var(--accent-2);
+    pointer-events: none;
+  }
+  .repo::before {
+    top: -1px; left: -1px;
+    border-width: 2px 0 0 2px;
+  }
+  .repo::after {
+    bottom: -1px; right: -1px;
+    border-width: 0 2px 2px 0;
+  }
+  .repo .name { font-family: ui-monospace, Consolas, monospace; font-weight: 700; font-size: 1.02rem; }
+  .repo p { margin: 0.3rem 0 0; font-size: 0.92rem; color: var(--muted); }
+  .repo .repolink { font-size: 0.8rem; font-family: ui-monospace, Consolas, monospace; }
+
+  .note {
+    border-left: 3px solid var(--accent-2);
+    padding: 0.1rem 0 0.1rem 1rem;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  /* Emacs modeline footer */
+  footer {
+    max-width: 44rem;
+    margin: 4rem auto 2.5rem;
+    padding: 0 1.25rem;
+  }
+  .modeline {
+    font-family: ui-monospace, Consolas, monospace;
+    font-size: 0.78rem;
+    background: var(--modeline-bg);
+    color: var(--modeline-fg);
+    border-radius: 2px;
+    padding: 0.35rem 0.75rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    white-space: nowrap;
+    overflow-x: auto;
+  }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="brand">
+      <img src="jetpacs-icon.svg" alt="Jetpacs logo">
+      <h1 class="wordmark"><span class="paren">(</span>jetpacs<span class="paren">)</span></h1>
+    </div>
+    <p class="tagline">Don’t approximate Emacs — connect to it.</p>
+    <span class="poc">LLM-generated proof of concept · Emacs–Android bridge protocol</span>
+    <p class="lede">
+      Every mobile org app parses the org file and reconstructs what Emacs would have
+      computed. But the file is a serialization format, not a specification — the
+      canonical computation lives in Emacs. Custom TODO sequences, agenda skip
+      functions, <code class="inline">org-ql</code> queries, capture hooks, clock
+      behavior: a parser can only approximate them.
+    </p>
+    <p class="lede">
+      Jetpacs takes a different premise. <strong>The phone is a thin pane of glass;
+      Emacs is the source of truth behind it.</strong> The Android companion is a
+      generic renderer with no application logic — it listens, renders cached surfaces
+      when Emacs is backgrounded, and replays queued actions when Emacs resumes. Emacs
+      dials in as the client, the same inversion <code class="inline">emacsclient</code>
+      uses on the desktop.
+    </p>
+    <nav class="cta">
+      <a class="primary" href="docs/">Docs</a>
+      <a href="docs/tutorial/">Tutorial</a>
+      <a href="ebp/">Protocol (EBP)</a>
+      <a href="jetpacs-composer/">Composer</a>
+      <a href="glasspane/">Glasspane</a>
+      <a href="https://github.com/calebc42/jetpacs">GitHub ↗</a>
+    </nav>
+  </header>
+
+  <pre class="diagram">┌─────────────────────────────────┐
+│  Android companion (the pane)   │
+│  • Foreground service           │
+│  • Renders whatever Emacs sends │
+│  • Caches last-known UI state   │
+│  • Queues offline actions       │
+└──────────────┬──────────────────┘
+               │  Jetpacs: NDJSON bridge
+               │  (loopback socket → signed Unix socket)
+┌──────────────┴──────────────────┐
+│  Emacs (the source of truth)    │
+│  • Pushes native UI specs       │
+│  • Handles user action events   │
+│  • Runs all the actual logic    │
+└─────────────────────────────────┘</pre>
+
+  <h2>The tiers in one breath</h2>
+  <ul>
+    <li><strong>Tier 0</strong> — any Emacs buffer renders on the phone by walking its
+      text properties; minibuffer prompts become native dialogs; any keymap is a
+      searchable command palette; <code class="inline">M-x</code> works. Zero
+      per-package code.</li>
+    <li><strong>Tier 0.5</strong> — one renderer per declarative Emacs UI framework:
+      <code class="inline">tabulated-list-mode</code> (every package menu, process
+      list, bookmark table) and <code class="inline">transient</code> (all of magit’s
+      menus) render as native touch UI.</li>
+    <li><strong>Tier 1</strong> — curated apps and skins on top. Glasspane is one.
+      Yours is the point.</li>
+  </ul>
+
+  <h2>What this makes possible</h2>
+  <p>Things a file parser can’t do, no matter how good it is:</p>
+  <ul>
+    <li>Run the user’s actual capture templates (<code class="inline">:function</code>
+      entries, hooks, <code class="inline">%(elisp)</code>).</li>
+    <li>Run <code class="inline">org-ql-select</code> across the whole org-roam graph.</li>
+    <li>Reflect the real <code class="inline">org-todo-keywords</code> sequence.</li>
+    <li><code class="inline">org-clock-in</code> with correct hooks and modeline behavior.</li>
+    <li>Trigger any interactive command — M-x on the phone.</li>
+  </ul>
+
+  <h2>Working today</h2>
+  <p>Proof of concept, but a broad one — everything in the
+    <a href="ebp/">protocol spec</a> is implemented on both sides:</p>
+  <ul>
+    <li><strong>Rendering</strong> — any buffer, the tabulated-list / transient / comint
+      renderers, the full widget vocabulary through tables, charts, canvas, and the
+      agenda month grid.</li>
+    <li><strong>The app shell</strong> — multi-app launcher home with per-app tabs,
+      chrome, and settings; package browser, customize browser, tools hub, and
+      automations screen as stock chrome.</li>
+    <li><strong>Interaction</strong> — semantic-action allowlist, offline queue with
+      replay and dedupe, the full minibuffer-prompt bridge, dialogs, bottom sheets,
+      radial pie menus.</li>
+    <li><strong>Editing</strong> — live editor sync with completion, flymake
+      diagnostics, eldoc, and fontification; the with-editor bridge
+      (<code class="inline">git commit</code> from the phone).</li>
+    <li><strong>The device</strong> — effectors callable from elisp (intents, TTS,
+      torch, volume, clipboard…), device triggers, home-screen widgets, QS tiles,
+      notifications, persistent reminders, Emacs-theme mirroring.</li>
+    <li><strong>Transport</strong> — mutual HMAC pairing, reconnect backoff, monotonic
+      surface revisions with offline rendering from cache.</li>
+  </ul>
+  <p class="note">Known limits: v0 is local-only (loopback socket — Emacs and the
+    companion on the same device), the companion is Android-only, and bridge latency /
+    battery cost are unprofiled.</p>
+
+  <h2>The ecosystem</h2>
+  <p>Jetpacs is the foundation. Sibling projects build on it — each has its own
+    section on this site:</p>
+  <div class="repos">
+    <div class="repo">
+      <a class="name" href="ebp/">EBP — the wire protocol →</a>
+      <p>The Emacs Bridge Protocol: the written spec, the machine-readable vocabulary,
+        and the golden conformance corpus. An interface anyone may implement — pin this
+        to build your own companion or renderer.
+        <br><a class="repolink" href="https://github.com/calebc42/ebp">github.com/calebc42/ebp ↗</a></p>
+    </div>
+    <div class="repo">
+      <a class="name" href="jetpacs-composer/">Jetpacs Composer →</a>
+      <p>Build Tier-1 apps as declarative org documents — no elisp. The no-code path onto
+        the foundation.
+        <br><a class="repolink" href="https://github.com/calebc42/jetpacs-composer">github.com/calebc42/jetpacs-composer ↗</a></p>
+    </div>
+    <div class="repo">
+      <a class="name" href="glasspane/">Glasspane →</a>
+      <p>The reference Tier-1 org app, in pure elisp. It exists to prove the foundation
+        and to be copied from — not to be the one true mobile Emacs.
+        <br><a class="repolink" href="https://github.com/calebc42/glasspane">github.com/calebc42/glasspane ↗</a></p>
+    </div>
+    <div class="repo" style="border-style:dashed">
+      <a class="name" href="jelpa/">JELPA <span style="font-size:0.7rem;font-weight:400;color:var(--muted)">(planned)</span> →</a>
+      <p>A MELPA-style archive for sharing and pulling Jetpacs apps. A captured idea, not
+        built yet — the concept, written down so it isn't lost.</p>
+    </div>
+  </div>
+
+  <h2>Get it running</h2>
+  <p>Two halves: the Emacs client and the Android companion. The companion listens;
+    Emacs dials in. Requires Emacs 28+.</p>
+  <pre class="code">;; 1. Load the client (single-file bundle from the repo root)
+(add-to-list 'load-path "~/.emacs.d/elisp")
+(require 'jetpacs-core)
+
+;; 2. Build + install the companion:  ./gradlew installDebug
+
+;; 3. Copy the pairing token from the companion screen, then
+M-x jetpacs-connect</pre>
+  <p>Full instructions, including <code class="inline">package-vc-install</code>
+    straight from git, are in the
+    <a href="https://github.com/calebc42/jetpacs#getting-started">README</a>, or start
+    with the step-by-step <a href="docs/tutorial/">tutorial</a>.</p>
+
+  <h2>License</h2>
+  <p>Jetpacs and Glasspane are free software under the
+    <a href="https://www.gnu.org/licenses/gpl-3.0.html">GNU GPL, version 3 or later</a>.
+    The license covers the code; the wire protocol itself is an interface anyone may
+    implement — a clean-room companion written against the spec carries no obligation
+    from the repo’s license.</p>
+</main>
+
+<footer>
+  <div class="modeline">
+    <span>-UUU:----F1&nbsp;&nbsp;jetpacs.org</span>
+    <span>© 2026 calebc42 · GPL-3.0-or-later&nbsp;&nbsp;(Org)</span>
+  </div>
+</footer>
+</body>
+</html>

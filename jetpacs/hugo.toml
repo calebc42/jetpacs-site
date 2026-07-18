@@ -1,0 +1,61 @@
+# Jetpacs docs site — hugo-book theme (vendored at themes/hugo-book, upstream a5c7632).
+# Served under https://jetpacs.org/docs/ from ~/publish-jetpacs/docs
+# (see build.sh). Content under content/ is synced from the jetpacs repo's
+# docs/ directory by sync-docs.sh — edit upstream, not here.
+
+baseURL = 'https://jetpacs.org/docs/'
+locale = 'en-us'
+title = 'Jetpacs'
+theme = 'hugo-book'
+
+disableKinds = ['taxonomy', 'term']
+
+[markup]
+  [markup.goldmark.renderer]
+    unsafe = true
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 3
+  [markup.highlight]
+    noClasses = false # class-based so light/dark chroma palettes can both ship
+
+[params]
+  description = 'Documentation for Jetpacs, the Emacs–Android bridge protocol.'
+  BookTheme = 'auto'
+  # jetpacs-icon.svg = jetpacs.svg foreground composed over a #7f5ab6 squircle
+  BookFavicon = 'jetpacs-icon.svg'
+  BookLogo = 'jetpacs-icon.svg'
+  # Root section rendered as the sidebar menu; pages live at content/*.md so
+  # URLs come out as /jetpacs/docs/<page>/ with baseURL carrying the prefix.
+  BookSection = '/'
+  BookRepo = 'https://github.com/calebc42/jetpacs'
+  # Synced pages mirror the repo's docs/ directory one-to-one.
+  BookEditLink = '{{ .Site.Params.BookRepo }}/edit/main/docs/{{ with .File }}{{ .Path }}{{ end }}'
+  BookSearch = true
+  BookComments = false
+  BookPortableLinks = 'warning'
+  BookDateFormat = 'January 2, 2006'
+
+# Ecosystem cross-nav — the same block appears on every jetpacs.org site so
+# the foundation, protocol, composer, and reference app all link to each other.
+[menu]
+  [[menu.after]]
+    name = '← Jetpacs home'
+    url = 'https://jetpacs.org/'
+    weight = 10
+  [[menu.after]]
+    name = 'EBP (protocol)'
+    url = 'https://jetpacs.org/ebp/'
+    weight = 20
+  [[menu.after]]
+    name = 'Composer'
+    url = 'https://jetpacs.org/jetpacs-composer/'
+    weight = 30
+  [[menu.after]]
+    name = 'Glasspane'
+    url = 'https://jetpacs.org/glasspane/'
+    weight = 40
+  [[menu.after]]
+    name = 'GitHub'
+    url = 'https://github.com/calebc42/jetpacs'
+    weight = 50

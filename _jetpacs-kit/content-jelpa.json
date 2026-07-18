@@ -1,0 +1,33 @@
+{
+  "slug": "jelpa",
+  "name": "JELPA — the Jetpacs app archive",
+  "tagline": "MELPA, for Jetpacs apps — publish once, pull anyone's, install from the phone.",
+  "badge": "Planned · a captured idea, not built yet",
+  "banner_label": "PLANNED",
+  "banner": "JELPA doesn't exist yet — no archive, no registry, no recipe format, no code. This page is a captured idea, parked well down the roadmap behind the foundation, the protocol, and the Composer. It's written down so the concept isn't lost.",
+  "lede_paragraphs": [
+    "JELPA is a sketch: a MELPA-style archive for **Jetpacs apps**. Today a Jetpacs Tier-1 app travels as a single file — an elisp bundle the Composer builds (`jetpacs-app-<id>.el`), or eventually a code-free declarative org document — and getting one onto a phone is a manual \"adopt this bundle\" step. JELPA is the missing distribution layer: publish an app once, and let anyone discover, pull, and install it from inside the companion.",
+    "The Emacs precedent is right there. MELPA turned \"clone this and add it to your `load-path`\" into `M-x package-install`. JELPA would do the same for Jetpacs: apps published by recipe against a git repo, versioned, with the launcher's pinned icons and names as first-class metadata — an app-store surface over the multi-app launcher home that already exists.",
+    "The trust story falls out of what's already built. Installing a code-bearing app is the same explicit code-trust consent the companion asks for when adopting a bundle today; a declarative org app carries no code, so it needs none. That two-tier split — trusted code vs trustless documents — is a natural spine for an archive."
+  ],
+  "what_heading": "What it would be",
+  "what_bullets": [
+    "A registry of installable Jetpacs apps — the elisp bundles Composer builds today, and the code-free declarative org apps as they land",
+    "Browse-and-install from inside the companion's launcher home — an app-store surface over the existing multi-app launcher, not a separate tool",
+    "Git-native and recipe-based, like MELPA: an app is published by a manifest pointing at its repo and a pinned version, not by uploading an opaque blob",
+    "Rides the existing trust model: a code-bearing app install is the same explicit `code-trust` consent as adopting a bundle today; a declarative org app carries no code and needs none",
+    "A curated central archive plus self-hosted / community indexes — mirroring MELPA vs a personal recipe repo",
+    "Uses metadata the launcher already understands — pinned icons, names, and a minimum contract `reference_api_version` — so an install is one tap plus a trust decision"
+  ],
+  "open_questions": [
+    "Trust: is a single code-trust prompt enough for arbitrary elisp, or do code-bearing apps need signing, publisher reputation, or sandboxing beyond today's consent gate?",
+    "Distribution shape: one curated archive, a federation of self-hosted indexes, or both?",
+    "On-device install path: git + network inside Emacs under Termux is the README's \"advanced footnote\" — is that the floor, or should the companion broker the fetch?",
+    "Versioning: how do app manifests pin against the EBP contract's `reference_api_version` so an app can't land on a companion too old to render it?",
+    "The code-free future: once Composer apps are pure declarative org, does JELPA become mostly a document index — closer to a template gallery than a package archive?",
+    "Curation & discovery: MELPA-style recipe review, ratings and categories, or just a flat searchable list to start?"
+  ],
+  "status": "Idea only — captured 2026-07-18 so it doesn't get lost. There is no archive, no registry, no recipe format, and no code. It sits well down the roadmap, behind the foundation, the EBP protocol, and the Composer. The pieces it would build on are real and shipping (Composer's single-file app bundles, the launcher's per-app icons, the code-trust consent gate, and the contract's api-version negotiation); the archive that ties them together is not.",
+  "primary_links": [],
+  "docs_manifest": []
+}

@@ -1,0 +1,25 @@
+{
+  "slug": "glasspane",
+  "site": "/home/calebc42/pkb/projects/jetpacs/jetpacs-site/glasspane",
+  "repo": "/home/calebc42/pkb/projects/jetpacs/glasspane",
+  "ref": "main",
+  "blob": "https://github.com/calebc42/glasspane/blob/main",
+  "cross_repo": {
+    "jetpacs": "https://github.com/calebc42/jetpacs/blob/slop-fork/main",
+    "ebp": "https://github.com/calebc42/ebp/blob/slop-fork/main",
+    "glasspane": "https://github.com/calebc42/glasspane/blob/main",
+    "jetpacs-composer": "https://github.com/calebc42/jetpacs-composer/blob/slop-fork/main"
+  },
+  "docs": [
+    {
+      "src": "docs/ROADMAP.md",
+      "title": "Roadmap \u2014 the Glasspane app",
+      "weight": 10
+    },
+    {
+      "src": "docs/PLAN-pkm-conversion.md",
+      "title": "Plan: PKM conversion (Obsidian / Logseq / Notion) & the KMP horizon",
+      "weight": 20
+    }
+  ]
+}

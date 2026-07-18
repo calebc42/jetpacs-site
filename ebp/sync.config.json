@@ -1,0 +1,30 @@
+{
+  "slug": "ebp",
+  "site": "/home/calebc42/pkb/projects/jetpacs/jetpacs-site/ebp",
+  "repo": "/home/calebc42/pkb/projects/jetpacs/ebp",
+  "ref": "slop-fork/main",
+  "blob": "https://github.com/calebc42/ebp/blob/slop-fork/main",
+  "cross_repo": {
+    "jetpacs": "https://github.com/calebc42/jetpacs/blob/slop-fork/main",
+    "ebp": "https://github.com/calebc42/ebp/blob/slop-fork/main",
+    "glasspane": "https://github.com/calebc42/glasspane/blob/main",
+    "jetpacs-composer": "https://github.com/calebc42/jetpacs-composer/blob/slop-fork/main"
+  },
+  "docs": [
+    {
+      "src": "SPEC.md",
+      "title": "EBP \u2014 the Emacs Bridge Protocol",
+      "weight": 10
+    },
+    {
+      "src": "BUILDING-COMPANION.md",
+      "title": "Building your own companion",
+      "weight": 20
+    },
+    {
+      "src": "SPEC-CHANGES.md",
+      "title": "SPEC amendment log",
+      "weight": 30
+    }
+  ]
+}
