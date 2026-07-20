@@ -19,7 +19,11 @@ fi
 hugo version
 rm -rf public
 mkdir -p public
-cp -r _root/. public/
+# Root landing: index.org -> content/_index.md (ox-hugo, run _root/export.sh
+# when the org changes) -> Hugo -> public/index.html.
+echo "== hugo build: _root (landing)"
+(cd _root && hugo --minify --gc --quiet)
+cp -r _root/public/. public/
 for s in jetpacs ebp glasspane jetpacs-composer; do
   echo "== hugo build: $s"
   (cd "$s" && hugo --minify --gc --quiet)
@@ -34,6 +38,6 @@ KIT="$ROOT/_jetpacs-kit"
 for s in ebp glasspane jetpacs-composer jelpa; do
   mkdir -p "public/$s"
   python3 "$KIT/gen-landing.py" "$KIT/content-$s.json" "public/$s/index.html"
-  cp _root/jetpacs-icon.svg "public/$s/"
+  cp _root/static/jetpacs-icon.svg "public/$s/"
 done
 echo "docroot assembled at $ROOT/public"

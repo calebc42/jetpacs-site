@@ -217,21 +217,124 @@
       <h1 class="wordmark"><span class="paren">(</span>jetpacs<span class="paren">)</span></h1>
     </div>
     <p class="tagline">Don’t approximate Emacs — connect to it.</p>
-    <span class="poc">LLM-generated proof of concept · Emacs–Android bridge protocol</span>
+    <span class="poc">An Android-focused implementation of the Emacs Bridge Protocol</span>
+    <h2>Foundation</h2>
     <p class="lede">
-      Every mobile org app parses the org file and reconstructs what Emacs would have
-      computed. But the file is a serialization format, not a specification — the
-      canonical computation lives in Emacs. Custom TODO sequences, agenda skip
-      functions, <code class="inline">org-ql</code> queries, capture hooks, clock
-      behavior: a parser can only approximate them.
+      At its soul, Jetpacs aspires to be nothing more than yet another implementation of
+      the ever elusive Lisp Machine. Specifically, Jetpacs sets its sights on
+      being optimized for mobile form factors and touchscreen interaction
+      models. Instead of rebuilding a Lisp Interpreter from scratch, Jetpacs
+      positions itself to leverage the existing Lisp Machine experience already
+      ported for Android: Emacs.
+
+      For anyone who shares this aspiration, it is a path that has been trodden
+      and had its routes carved over decades: server.el/emacsclient in the
+      1980s, `make-network-process` in Emacs 22, `elnode` and `simple-httpd` in
+      the early-2010s. This "Emacs-as-a-server" battle-testing carried the TCP
+      foundation right over to "smartphone-as-a-client". However, here Emacs
+      promptly hits a wall: even after constructing infrastructure for NAT
+      traversal and weathering latency, it finds that it needs a persistent
+      connection or polling from the client on a wireless, intermittent device
+      whose Operating System is optimized for battery life by aggressively
+      killing background processes. Emacs shouts communications to a remote
+      listener who has been rendered unreliable by an outright hostile
+      host. Then, in 2009, the Org Mode Community recognized that the state must
+      live on the phone and that a local state would require a native parser
+      which led to implementing MobileOrg. This Emacs-approximation has been the
+      only rational implementation: eliminate the link entirely, sync the files,
+      parse them, and approximate the logic with lossy, destructive
+      round-trips. This approach was carried through Orgzly, organice, Orgro,
+      beorg, each one shouldering the Herculean task of reimplementing the file
+      format per platform per question Emacs had already answered.
+
+      Recently, with the advent of Po Lu's diligent Android port released in
+      Emacs 30, this duplicated org-parsing and application logic can be
+      returned to its home in Elisp where its introspection and configuration is
+      restored. However, we promptly find ourselves presented with a program
+      built before the concept of a mouse and demand it render interactive
+      buttons, high-refresh animations, create home screen widgets, interop with
+      vCal, access a hardware camera. Even if the user doesn't care for such
+      niceties, it is only a matter of time before the Lisp Machine in their
+      hand emboldens them to ask questions like: "If the phone knows my
+      location, how do I get location based-reminders?", "Why can't I input
+      using the hardware camera as a barcode scanner?", or "What if I could
+      execute elisp by scanning an NFC Tag/QR Code?". We have successfully
+      mobilized our Lisp Machine experience into the modern world only to find
+      that it requires lugging around an external keyboard or installing a
+      litany of third-party keyboards that lack sufficient FST algorithms,
+      workable auto-complete, or spell-check all just to use an interaction
+      model not built for the form-factor. To implement any such native
+      functionalities in Emacs is tantamount to open-heart surgery: rewrite the
+      display engine for animation, bind Android's camera APIs into the C core,
+      write an elisp software keyboard. In the end, each one of them is an
+      inversion of the exact approximation mistakes from the Org parsers of the
+      past. Ultimately, Emacs finds itself a foreign-citizen with no viable path
+      to assimilation.
+
+      At its core, Jetpacs is an Android-focused implementation of the Emacs
+      Bridge Protocol, a JSON-RPC envelope inspired by Language Server Protocol
+      that can be transported to any companion (not just Jetpacs) that can hold
+      a socket and draw pixels to a canvas. Jetpacs stands atop the
+      EBP to extend the mobile-native half of the equation to Emacs without either
+      side regressing to approximations. The EBP wires a formally-specified
+      structured-input that is interpreted by the companion who holds no
+      application logic; Emacs computes the declarations of what to draw, the
+      companion faithfully renders, caches snapshots and queues your
+      inputs. By design, Elisp remains the only whole programming language in the system.
+
+      However, unlike in `emacs --daemon` where the durable, long-lived thing
+      listens and the ephemeral client dials, Jetpacs flips the traditional
+      approach that you'd expect and treats the "smartphone-as-the-server". For
+      our environment, we need to answer which side is durable where the only
+      process guaranteed to be alive when you're tapping on the screen is the
+      app you're looking at. Since we have determined that Emacs should not
+      approximate a phone, the companion must be the foreground service and
+      this precludes Emacs being the reliable server per the manual:
+      "Application processes are treated as disposable entities by the
+      system. When all Emacs frames move to the background, Emacs might be
+      terminated by the system at any time.". Further, it's arguably not even
+      the companion's process — it is the companion's disk cache. For all
+      intents and purposes, "reliable server" means designing the companion
+      process so that it can die freely and when revived, it rebuilds from disk,
+      fires the `wake` policy, makes a handshake, then flushes the queue.
+
+      The Lisp Machine experience has been nicely folded into your pocket, but it
+      remains isolated from interaction in the real world. Emacs has been
+      embodied with no access to its senses and granted a face whose functions
+      rely on a non-existent appendages. These are the landmarks of
+      Jetpacs' roadmap.
+
+
+      This boundary predicates that remote Eval is in-fact, the crux of
+      the execution model, not a bug.
+      
+      Because you can prove things about weak languages that are unprovable about strong ones: this input always terminates; this interpreter's entire behavior fits in a table; this substitution cannot inject; this old renderer cannot be tricked into inverting a rule. Security review becomes reading a catalog instead of analyzing a Turing machine. A hand-implementor — you — can hold an entire interpreter in your head. And nothing is lost, because the authoring end has unlimited power (elisp) and the compiler translates rich intentions into weak descriptions, waking the real language when a rule exceeds the fence.
+
+      as shown in AOSP's own Documentation for Cached Apps Freezer: a backgrounded app without a foreground service is frozen ten seconds after it leaves the screen, and when an app's processes are frozen, the system terminates any active TCP sockets it maintains. 
+     
+
+      Capabilities are the hand; triggers are the ear; the brain that composes them is Emacs. The companion gives Emacs the "I'm a phone" perspective it lacks — a body: eyes on the battery, fingers on the flashlight — without ever becoming a second mind. Embracing phone-ness harder is straightforwardly good, and cheap: both catalogs grow additively, so "more Tasker parity" means more rows, not new architecture. Lean in freely.
+
+      "no language on the wire may climb past a certain rung." All four of those little languages share three engineered properties: they always terminate (no loops, no recursion, no unbounded composition — a widget tree just ends; an on_fire list runs once, in order); they're enumerable (closed vocabularies, negotiated by catalog); and they're safe under partial understanding (an evaluator that doesn't know a construct can skip it without inverting meaning — with the one constraining exception, when, which got its own catalog-and-skip-whole rule because it breaks that property). There's an established security principle behind this — treat every input format as a language and keep each language as weak as its job allows — and the bright line on the expressiveness ladder is exactly where I planted the flag last time: conditionals-plus-state-plus-iteration, the rung where termination, enumerability, and partial-understanding-safety all die at once, and with them the wire's whole compatibility model.
+
+      The fence line, then: conditionals + state + iteration, together, are where all three properties die at once — the language can now loop (goodbye termination), its sentences mean nothing when partially understood (goodbye compatibility), and its behavior stops being enumerable (goodbye auditability). Below that line, a language is a description. Above it, it's a program. The invariant says: the wire carries descriptions, and the only whole programming language in the system is the one that already exists, is forty years old, and lives in Emacs.
+
+      of JSON describing screens (widget trees), conditions (when predicates), responses (on_fire lists), and text substitutions (${data.level} placeholders)
+
+      The EBP wire carries a
+      formally specified structured input that is interpreted by the companion.
+      however, the companion holds no application logic, it cannot loop, uses a closed vocabulary and is entirely
+      stateless. The only whole programming language in the system is the one
+      that already exists, is forty years old, and lives in Emacs.
+
+      "Wrong state can only ever cause a missing feature, never a wrong edit — the shadow never writes to disk, and completion insertion happens companion-side."
     </p>
-    <p class="lede">
-      Jetpacs takes a different premise. <strong>The phone is a thin pane of glass;
-      Emacs is the source of truth behind it.</strong> The Android companion is a
-      generic renderer with no application logic — it listens, renders cached surfaces
-      when Emacs is backgrounded, and replays queued actions when Emacs resumes. Emacs
-      dials in as the client, the same inversion <code class="inline">emacsclient</code>
-      uses on the desktop.
+
+      Your emacsclient example actually argues for the spec — with a twist. In emacs --daemon, the durable, long-lived thing listens and the ephemeral thing dials. Correct pattern! The disagreement is only about which side is durable on a phone. It isn't Emacs-the-process. It's arguably not even companion-the-process — it's the companion's disk cache. The companion process can die freely, because when you open the app, Android guarantees that process is alive and it rebuilds from disk in milliseconds. "Durable server" never meant "immortal process"; it means "the socket-listening role sits with the side whose death costs nothing."
+
+      N brains, N faces, synced data (works today): each device runs its own complete Emacs+companion pair, and the org files sync underneath via Syncthing. Nothing in jetpacs needs to change or even know — sync happens below the brain, at the file layer. This is the classic Orgzly+Syncthing pattern and it's the pragmatic answer right now. Its costs are the usual ones: staleness between sync cycles, Syncthing conflict files if you edit the same note on two devices before sync catches up, and duplicated side-effects (two brains both scheduling the same reminder on their own device — arguably a feature, occasionally a double alarm).
+
+      The people who love the architecture but won't touch the Google stack aren't detractors — they're the spec's intended second implementors. The document courts them explicitly: a companion is "anything that can hold a TCP socket and draw boxes — a desktop tray app, an e-ink dashboard, a terminal TUI"; clean-room implementations against the spec carry no license obligation from the reference; the goldens and validator exist so a stranger can prove conformance without asking permission. A Rust/Slint desktop pane, a GTK tray app, a plain-Views Android build for the Compose-averse, an F-Droid-purist build — all of those are the system working as intended, not schisms. (Worth noting: the entire F-Droid store is free-software Android apps built against that same SDK, so even "fully FOSS Android companion" is well-trodden ground.)
     </p>
     <nav class="cta">
       <a class="primary" href="docs/">Docs</a>
@@ -244,13 +347,13 @@
   </header>
 
   <pre class="diagram">┌─────────────────────────────────┐
-│  Android companion (the pane)   │
+│  Jetpacs (Android Companion)    │
 │  • Foreground service           │
 │  • Renders whatever Emacs sends │
 │  • Caches last-known UI state   │
 │  • Queues offline actions       │
 └──────────────┬──────────────────┘
-               │  Jetpacs: NDJSON bridge
+               │  Emacs Bridge Protocol: NDJSON bridge
                │  (loopback socket → signed Unix socket)
 ┌──────────────┴──────────────────┐
 │  Emacs (the source of truth)    │
@@ -259,6 +362,8 @@
 │  • Runs all the actual logic    │
 └─────────────────────────────────┘</pre>
 
+  <h2>The Envelope</h2>
+  
   <h2>The tiers in one breath</h2>
   <ul>
     <li><strong>Tier 0</strong> — any Emacs buffer renders on the phone by walking its
@@ -269,7 +374,7 @@
       <code class="inline">tabulated-list-mode</code> (every package menu, process
       list, bookmark table) and <code class="inline">transient</code> (all of magit’s
       menus) render as native touch UI.</li>
-    <li><strong>Tier 1</strong> — curated apps and skins on top. Glasspane is one.
+    <li><strong>Tier 1</strong> — curated apps and skins on top. Glasspane is mine.
       Yours is the point.</li>
   </ul>
 
@@ -300,6 +405,7 @@
     <li><strong>Editing</strong> — live editor sync with completion, flymake
       diagnostics, eldoc, and fontification; the with-editor bridge
       (<code class="inline">git commit</code> from the phone).</li>
+    the bridge names no providers, only interfaces — so anything that speaks capf/flymake/eldoc, from dabbrev to eglot, is in-scope by construction.
     <li><strong>The device</strong> — effectors callable from elisp (intents, TTS,
       torch, volume, clipboard…), device triggers, home-screen widgets, QS tiles,
       notifications, persistent reminders, Emacs-theme mirroring.</li>
@@ -342,7 +448,7 @@
 
   <h2>Get it running</h2>
   <p>Two halves: the Emacs client and the Android companion. The companion listens;
-    Emacs dials in. Requires Emacs 28+.</p>
+    Emacs dials in. Requires Emacs 28+ — on-device via Termux, or via the native Emacs 30+ Android port.</p>
   <pre class="code">;; 1. Load the client (single-file bundle from the repo root)
 (add-to-list 'load-path "~/.emacs.d/elisp")
 (require 'jetpacs-core)

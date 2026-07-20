@@ -1,0 +1,234 @@
+<style>
+  /* Jetpacs app default palette — rooted in the Emacs logo purple #7f5ab6.
+     Kept in sync with the docs site (pkb/sites/jetpacs/assets/_custom.scss). */
+  :root {
+    --bg: #f0ebde;            /* background main */
+    --fg: #3f3b3b;            /* text primary */
+    --muted: #6f695e;         /* derived: subtle bg darkened toward text */
+    --accent: #624195;        /* accent dark — AA on cream; #7f5ab6 is 4.4:1 */
+    --accent-2: #7f5ab6;      /* THE Emacs purple — decorative accents */
+    --surface: #f2efe4;       /* background elevated */
+    --border: #d4cbb6;        /* background subtle */
+    --modeline-bg: #d4cbb6;
+    --modeline-fg: #3f3b3b;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1e1c24;          /* background main */
+      --fg: #e6e2d8;          /* text primary */
+      --muted: #9a9590;       /* text secondary */
+      --accent: #b8a3e0;      /* accent light */
+      --accent-2: #8a6bc4;    /* accent dark, lifted */
+      --surface: #2a2832;     /* background elevated */
+      --border: #353240;      /* background subtle */
+      --modeline-bg: #2a2832;
+      --modeline-fg: #9a9590;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font: 17px/1.65 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  code, pre, .mono {
+    font-family: ui-monospace, "Cascadia Code", "JetBrains Mono", Consolas, monospace;
+  }
+  main {
+    max-width: 44rem;
+    margin: 0 auto;
+    padding: 3.5rem 1.25rem 2rem;
+  }
+  a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  a:hover { color: var(--accent-2); }
+
+  /* Hero */
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+  }
+  .brand img {
+    width: 74px;
+    height: 74px;
+    flex: none;
+  }
+  .wordmark {
+    font-family: ui-monospace, Consolas, monospace;
+    font-size: 2.6rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+  .wordmark .paren { color: var(--muted); font-weight: 400; }
+  .tagline {
+    font-size: 1.3rem;
+    margin: 0.5rem 0 1.25rem;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .lede { font-size: 1.05rem; }
+  .poc {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-family: ui-monospace, Consolas, monospace;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 0.1rem 0.5rem;
+    margin-bottom: 1rem;
+  }
+  .cta { margin: 1.5rem 0 0; display: flex; flex-wrap: wrap; gap: 0.6rem; }
+  .cta a {
+    display: inline-block;
+    font-family: ui-monospace, Consolas, monospace;
+    font-size: 0.9rem;
+    text-decoration: none;
+    padding: 0.45rem 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    color: var(--fg);
+    /* YoRHa-style hover: accent fills left-to-right, text inverts */
+    background-color: var(--surface);
+    background-image: linear-gradient(var(--accent), var(--accent));
+    background-repeat: no-repeat;
+    background-size: 0% 100%;
+    transition: background-size 0.22s ease, color 0.22s ease, border-color 0.22s ease;
+  }
+  .cta a.primary { background-color: var(--accent); border-color: var(--accent); color: var(--bg); }
+  .cta a:hover { border-color: var(--accent); background-size: 100% 100%; color: var(--bg); }
+  .cta a.primary:hover { opacity: 0.9; }
+
+  /* Org-style section headings */
+  h2 {
+    font-family: ui-monospace, Consolas, monospace;
+    font-size: 1.25rem;
+    margin: 3rem 0 0.75rem;
+  }
+  h2::before { content: "* "; color: var(--accent-2); }
+  h3 {
+    font-family: ui-monospace, Consolas, monospace;
+    font-size: 1.05rem;
+    margin: 1.5rem 0 0.5rem;
+  }
+  h3::before { content: "** "; color: var(--accent); }
+
+  pre.diagram {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 1rem 1.25rem;
+    overflow-x: auto;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    margin: 2.5rem 0 0;
+    position: relative;
+  }
+  pre.code {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 0.75rem 1rem;
+    overflow-x: auto;
+    font-size: 0.85rem;
+  }
+  code.inline {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 0.05rem 0.35rem;
+    font-size: 0.85em;
+  }
+  ul { padding-left: 1.4rem; }
+  li { margin: 0.35rem 0; }
+  li::marker { color: var(--accent-2); }
+
+  .repos { display: grid; gap: 0.75rem; margin-top: 1rem; }
+  .repo {
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    background: var(--surface);
+    padding: 0.9rem 1.1rem;
+    position: relative;
+  }
+  /* YoRHa corner brackets — top-left and bottom-right L ornaments */
+  .repo::before, .repo::after {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border: 0 solid var(--accent-2);
+    pointer-events: none;
+  }
+  .repo::before {
+    top: -1px; left: -1px;
+    border-width: 2px 0 0 2px;
+  }
+  .repo::after {
+    bottom: -1px; right: -1px;
+    border-width: 0 2px 2px 0;
+  }
+  .repo .name { font-family: ui-monospace, Consolas, monospace; font-weight: 700; font-size: 1.02rem; }
+  .repo p { margin: 0.3rem 0 0; font-size: 0.92rem; color: var(--muted); }
+  .repo .repolink { font-size: 0.8rem; font-family: ui-monospace, Consolas, monospace; }
+
+  .note {
+    border-left: 3px solid var(--accent-2);
+    padding: 0.1rem 0 0.1rem 1rem;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  /* Emacs modeline footer */
+  footer {
+    max-width: 44rem;
+    margin: 4rem auto 2.5rem;
+    padding: 0 1.25rem;
+  }
+  .modeline {
+    font-family: ui-monospace, Consolas, monospace;
+    font-size: 0.78rem;
+    background: var(--modeline-bg);
+    color: var(--modeline-fg);
+    border-radius: 2px;
+    padding: 0.35rem 0.75rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    white-space: nowrap;
+    overflow-x: auto;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Markdown-rendered body (ox-hugo output). The hand-written page used */
+  /* .diagram/.code/.inline/.note classes; Hugo emits plain <pre>,       */
+  /* <code>, and <blockquote>, so mirror those styles onto the elements. */
+  /* ------------------------------------------------------------------ */
+  main pre {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 0.9rem 1.1rem;
+    overflow-x: auto;
+    font-size: 0.82rem;
+    line-height: 1.45;
+  }
+  main pre code { background: none; border: 0; padding: 0; font-size: inherit; }
+  main :not(pre) > code {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 0.05rem 0.35rem;
+    font-size: 0.85em;
+  }
+  main blockquote {
+    border-left: 3px solid var(--accent-2);
+    margin: 1.5rem 0;
+    padding: 0.1rem 0 0.1rem 1rem;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+  /* "(planned)" tag inside an ecosystem card's title (e.g. JELPA). */
+  .repo-note { font-size: 0.7rem; font-weight: 400; color: var(--muted); }
+</style>

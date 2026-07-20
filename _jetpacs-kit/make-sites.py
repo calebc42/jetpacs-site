@@ -17,21 +17,21 @@ SITES = os.path.dirname(KIT)
 DOCROOT = os.path.join(os.path.dirname(KIT), "public")
 
 CROSS_REPO = {
-    "jetpacs": "https://github.com/calebc42/jetpacs/blob/slop-fork/main",
-    "ebp": "https://github.com/calebc42/ebp/blob/slop-fork/main",
+    "jetpacs": "https://github.com/calebc42/jetpacs/blob/main",
+    "ebp": "https://github.com/calebc42/ebp/blob/main",
     "glasspane": "https://github.com/calebc42/glasspane/blob/main",
-    "jetpacs-composer": "https://github.com/calebc42/jetpacs-composer/blob/slop-fork/main",
+    "jetpacs-composer": "https://github.com/calebc42/jetpacs-composer/blob/main",
 }
 
 # slug -> (short title, repo checkout path, github repo url, git ref to sync)
-# ebp's current spec lives on ebp/slop-fork (main is empty mid repo-split);
-# composer and glasspane track main. sync reads the committed ref, so the
-# checkouts' dirty working trees don't matter.
+# All sites track main. Docs for ebp/jetpacs-composer are mid-migration off
+# slop-fork, so main may be sparse until the repo-split lands. sync reads the
+# committed ref, so the checkouts' dirty working trees don't matter.
 REPOS = {
     "ebp": ("EBP", "/home/calebc42/pkb/projects/jetpacs/ebp",
-            "https://github.com/calebc42/ebp", "slop-fork/main"),
+            "https://github.com/calebc42/ebp", "main"),
     "jetpacs-composer": ("Jetpacs Composer", "/home/calebc42/pkb/projects/jetpacs/jetpacs-composer",
-                         "https://github.com/calebc42/jetpacs-composer", "slop-fork/main"),
+                         "https://github.com/calebc42/jetpacs-composer", "main"),
     "glasspane": ("Glasspane", "/home/calebc42/pkb/projects/jetpacs/glasspane",
                   "https://github.com/calebc42/glasspane", "main"),
 }

@@ -8,9 +8,9 @@
 set -euo pipefail
 
 REPO="${JETPACS_REPO:-/home/calebc42/pkb/projects/jetpacs/jetpacs}"
-REF="${JETPACS_REF:-slop-fork/main}"
+REF="${JETPACS_REF:-main}"
 SITE="$(cd "$(dirname "$0")" && pwd)"
-JETPACS_BLOB="https://github.com/calebc42/jetpacs/blob/slop-fork/main"
+JETPACS_BLOB="https://github.com/calebc42/jetpacs/blob/main"
 EBP_BLOB="https://github.com/calebc42/ebp/blob/main"
 
 # filename (under docs/, no extension) : sidebar weight

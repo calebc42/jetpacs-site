@@ -1,0 +1,7 @@
+{{- /* One ecosystem card. Params: name, href, github?, note?, dashed?.
+       Inner text is the description. */ -}}
+{{- $gh := .Get "github" -}}
+<div class="repo"{{ if .Get "dashed" }} style="border-style:dashed"{{ end }}>
+  <a class="name" href="{{ .Get "href" }}">{{ .Get "name" }}{{ with .Get "note" }} <span class="repo-note">({{ . }})</span>{{ end }} →</a>
+  <p>{{ .Inner | strings.TrimSpace }}{{ with $gh }}<br><a class="repolink" href="{{ . }}">{{ replaceRE "^https?://" "" . }} ↗</a>{{ end }}</p>
+</div>

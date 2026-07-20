@@ -1,4 +1,7 @@
 public/
-*/public/
-*/resources/_gen/
-*/.hugo_build.lock
+**/resources/_gen/
+.hugo_build.lock
+
+# Emacs lock/backup droppings
+.#*
+*~

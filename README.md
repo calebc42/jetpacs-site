@@ -13,7 +13,7 @@ The whole jetpacs.org docroot: a Hugo site per project plus a shared kit.
 ## Editing docs
 
 Content under each site's `content/` is SYNCED from the project repos
-(`~/pkb/projects/jetpacs/<repo>`, branch `slop-fork/main`) — edit upstream,
+(`~/pkb/projects/jetpacs/<repo>`, branch `main`) — edit upstream,
 then run `./sync-docs.sh` in the site dir (or `_jetpacs-kit/make-sites.py`
 for the three sub-sites) and commit the result here.
 

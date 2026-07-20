@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ .Title }}</title>
+<meta name="description" content="{{ with .Description }}{{ . }}{{ else }}{{ .Site.Params.description }}{{ end }}">
+<link rel="icon" type="image/svg+xml" href="/jetpacs-icon.svg">
+{{ partial "landing-css.html" . }}
+</head>
+<body>
+<main>
+  <header>
+    <div class="brand">
+      <img src="/jetpacs-icon.svg" alt="Jetpacs logo">
+      <h1 class="wordmark"><span class="paren">(</span>jetpacs<span class="paren">)</span></h1>
+    </div>
+    {{ with .Params.tagline }}<p class="tagline">{{ . }}</p>{{ end }}
+    {{ with .Params.badge }}<span class="poc">{{ . }}</span>{{ end }}
+    <nav class="cta">
+      <a class="primary" href="/docs/">Docs</a>
+      <a href="/docs/tutorial/">Tutorial</a>
+      <a href="/ebp/">Protocol (EBP)</a>
+      <a href="/jetpacs-composer/">Composer</a>
+      <a href="/glasspane/">Glasspane</a>
+      <a href="https://github.com/calebc42/jetpacs">GitHub ↗</a>
+    </nav>
+  </header>
+  {{/* Body prose (Foundation … License) comes from index.org via ox-hugo. */}}
+  {{ .Content }}
+</main>
+
+<footer>
+  <div class="modeline">
+    <span>-UUU:----F1&nbsp;&nbsp;jetpacs.org</span>
+    <span>© 2026 calebc42 · GPL-3.0-or-later&nbsp;&nbsp;(Org)</span>
+  </div>
+</footer>
+</body>
+</html>

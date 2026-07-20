@@ -1,0 +1,21 @@
+# Root jetpacs.org landing — a single hand-authored page, themeless.
+# Source of truth is index.org; `./export.sh` runs ox-hugo to write
+# content/_index.md here, and ../build-all.sh compiles this into the
+# docroot at public/index.html (site root).
+baseURL = 'https://jetpacs.org/'
+locale = 'en-us'
+title = 'Jetpacs — Emacs–Android Bridge Protocol'
+
+# Single landing page — no feeds, taxonomies, or section pages.
+disableKinds = ['taxonomy', 'term', 'RSS', 'sitemap', 'section']
+enableRobotsTXT = false
+
+[params]
+  description = "Don't approximate Emacs — connect to it. The phone is a thin pane of glass; Emacs is the source of truth behind it."
+
+[markup]
+  [markup.goldmark.renderer]
+    unsafe = true          # allow the occasional inline HTML from the org source
+  [markup.highlight]
+    codeFences = false     # render code blocks as plain <pre><code>; the landing
+                           # styles them itself (no chroma stylesheet to ship)

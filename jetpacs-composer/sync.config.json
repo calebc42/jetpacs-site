@@ -2,13 +2,13 @@
   "slug": "jetpacs-composer",
   "site": "/home/calebc42/pkb/projects/jetpacs/jetpacs-site/jetpacs-composer",
   "repo": "/home/calebc42/pkb/projects/jetpacs/jetpacs-composer",
-  "ref": "slop-fork/main",
-  "blob": "https://github.com/calebc42/jetpacs-composer/blob/slop-fork/main",
+  "ref": "main",
+  "blob": "https://github.com/calebc42/jetpacs-composer/blob/main",
   "cross_repo": {
-    "jetpacs": "https://github.com/calebc42/jetpacs/blob/slop-fork/main",
-    "ebp": "https://github.com/calebc42/ebp/blob/slop-fork/main",
+    "jetpacs": "https://github.com/calebc42/jetpacs/blob/main",
+    "ebp": "https://github.com/calebc42/ebp/blob/main",
     "glasspane": "https://github.com/calebc42/glasspane/blob/main",
-    "jetpacs-composer": "https://github.com/calebc42/jetpacs-composer/blob/slop-fork/main"
+    "jetpacs-composer": "https://github.com/calebc42/jetpacs-composer/blob/main"
   },
   "docs": [
     {
